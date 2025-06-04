@@ -1,0 +1,26 @@
+{
+  "name": "sunvoy-reverse-engineer",
+  "version": "1.0.0",
+  "description": "Reverse engineering script for challenge.sunvoy.com to fetch users and authenticated user details.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [
+    "reverse-engineering",
+    "automation",
+    "nodejs",
+    "cookiejar",
+    "cheerio",
+    "sunvoy"
+  ],
+  "author": "YOUR NAME",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.8",
+    "axios-cookiejar-support": "^5.0.1",
+    "cheerio": "^1.0.0-rc.12",
+    "qs": "^6.11.2",
+    "tough-cookie": "^4.1.3"
+  }
+}
