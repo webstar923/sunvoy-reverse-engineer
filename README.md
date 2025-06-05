@@ -58,3 +58,5 @@ This Node.js project reverse-engineers a legacy web application at [https://chal
 ### Author
 Created by Zachary Speer for the Sunvoy Full Stack Engineer Challenge.
 
+### Video URL
+https://www.loom.com/share/46f006852528466494d0d1fcb7d0c7db?sid=cebc8059-d2cb-4233-b817-49600c5fc3e0
