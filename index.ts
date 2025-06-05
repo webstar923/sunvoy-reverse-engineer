@@ -1,10 +1,10 @@
-const axios = require('axios').default;
-const tough = require('tough-cookie');
-const { wrapper } = require('axios-cookiejar-support');
-const cheerio = require('cheerio');
-const qs = require('qs');
-const crypto = require('crypto');
-const fs = require('fs');
+import axios from 'axios';
+import * as tough from 'tough-cookie';
+import { wrapper } from 'axios-cookiejar-support';
+import * as cheerio from 'cheerio';
+import * as qs from 'qs';
+import * as crypto from 'crypto';
+import * as fs from 'fs';
 
 const BASE_URL = 'https://challenge.sunvoy.com';
 const API_URL = 'https://api.challenge.sunvoy.com';
@@ -12,22 +12,30 @@ const COOKIE_FILE = './cookies.json';
 
 // --- Load and Save Cookie Jar ---
 
-function loadCookieJar() {
+function loadCookieJar(): tough.CookieJar {
   const jar = new tough.CookieJar();
   if (fs.existsSync(COOKIE_FILE)) {
-    const raw = fs.readFileSync(COOKIE_FILE);
+    const raw = fs.readFileSync(COOKIE_FILE, 'utf-8');
     const cookies = JSON.parse(raw);
-    cookies.forEach(cookie => {
-      jar.setCookieSync(new tough.Cookie(cookie), BASE_URL);
+    cookies.forEach((cookie: any) => {
+      const deserialized = tough.Cookie.fromJSON(cookie);
+      if (deserialized) {
+        jar.setCookieSync(deserialized, BASE_URL);
+      }
     });
   }
   return jar;
 }
 
-function saveCookieJar(jar) {
+function saveCookieJar(jar: tough.CookieJar) {
+
   jar.getCookies(BASE_URL, (err, cookies) => {
+
     if (err) return console.error('Failed to save cookies:', err);
+    
+
     const serialized = cookies.map(cookie => cookie.toJSON());
+
     fs.writeFileSync(COOKIE_FILE, JSON.stringify(serialized, null, 2));
   });
 }
@@ -37,17 +45,17 @@ const jar = loadCookieJar();
 const client = wrapper(axios.create({ jar, withCredentials: true }));
 
 // --- Get Login Nonce ---
-async function getNonce() {
+async function getNonce(): Promise<string> {
   console.log('Fetching nonce...');
   const res = await client.get(`${BASE_URL}/login`);
   const $ = cheerio.load(res.data);
-  return $('input[name="nonce"]').val();
+  return $('input[name="nonce"]').val() || '';
 }
 
 // --- Generate Signed API Payload ---
-function createSignedRequest(fields) {
+function createSignedRequest(fields: Record<string, string>): string {
   const timestamp = Math.floor(Date.now() / 1000).toString();
-  const payloadFields = { ...fields, timestamp };
+  const payloadFields: Record<string, string> = { ...fields, timestamp };
 
   const sortedKeys = Object.keys(payloadFields).sort();
   const payloadString = sortedKeys
@@ -62,10 +70,10 @@ function createSignedRequest(fields) {
 }
 
 // --- Scrape Tokens from HTML ---
-async function getTokens() {
+async function getTokens(): Promise<string> {
   const res = await client.get(`${BASE_URL}/settings/tokens`);
   const $ = cheerio.load(res.data);
-  const extract = id => $(`input#${id}`).val();
+  const extract = (id: string) => $(`input#${id}`).val() || '';
 
   const token = {
     access_token: extract('access_token'),
@@ -80,7 +88,7 @@ async function getTokens() {
 }
 
 // --- Check If Session Is Valid ---
-async function isSessionValid() {
+async function isSessionValid(): Promise<boolean> {
   try {
     const res = await client.post(`${BASE_URL}/api/users`);
     return Array.isArray(res.data);
@@ -90,7 +98,7 @@ async function isSessionValid() {
 }
 
 // --- Perform Login ---
-async function login() {
+async function login(): Promise<void> {
   const nonce = await getNonce();
   const loginData = qs.stringify({
     nonce,
@@ -106,7 +114,7 @@ async function login() {
 }
 
 // --- Main Execution ---
-async function main() {
+async function main(): Promise<void> {
   try {
     if (await isSessionValid()) {
       console.log('Reusing existing session.');
@@ -127,11 +135,16 @@ async function main() {
       currentUser: meRes.data,
     };
 
-    fs.writeFileSync('users.json', JSON.stringify(data, null, 2));
+    fs.writeFileSync(
+      'users.json',
+      JSON.stringify(data, (_key, value) => {
+        return value;
+      }, 2)
+    );
     console.log('users.json created successfully.');
 
     saveCookieJar(jar);
-  } catch (err) {
+  } catch (err: any) {
     if (err.response) {
       console.error('HTTP Error:', err.response.status, err.response.statusText);
       console.error('Response:', err.response.data);

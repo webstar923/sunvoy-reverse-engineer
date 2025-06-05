@@ -1,6 +1,6 @@
 # Sunvoy Reverse Engineering Challenge
 
-This Node.js project reverse-engineers a legacy web application at [https://challenge.sunvoy.com](https://challenge.sunvoy.com). It:
+This Node.js + TypeScript script logs into the [Sunvoy Challenge Website](https://challenge.sunvoy.com), scrapes authenticated user data, and saves it locally to `users.json`. It supports session reuse with cookie persistence to avoid repeated logins. It:
 
 - Logs into the platform using demo credentials
 - Scrapes a list of users via `/api/users`
@@ -10,13 +10,16 @@ This Node.js project reverse-engineers a legacy web application at [https://chal
 
 ---
 
-## Features
+##  Technologies
 
-- Session reuse using a persistent cookie jar
-- Token scraping with cheerio
-- Signed payload generation (HMAC-SHA1 with `mys3cr3t`)
-- Clear and user-friendly console output
-- Fully automated with no manual interaction required
+- Node.js
+- TypeScript
+- Axios with cookie jar support
+- Cheerio (for HTML scraping)
+- qs (form encoding)
+- crypto (HMAC signing)
+- tough-cookie (cookie jar handling)
+- fs (filesystem)
 
 ---
 
@@ -56,7 +59,7 @@ This Node.js project reverse-engineers a legacy web application at [https://chal
   Cookies are stored in cookies.json. If that file becomes corrupt, simply delete it and rerun the script.
 
 ### Author
-Created by Zachary Speer for the Sunvoy Full Stack Engineer Challenge.
+  Created by Zachary Speer for the Sunvoy Full Stack Engineer Challenge.
 
-### Video URL
-https://www.loom.com/share/46f006852528466494d0d1fcb7d0c7db?sid=cebc8059-d2cb-4233-b817-49600c5fc3e0
+### Video Link URL
+https://www.loom.com/share/282f17f467554b9cb18ad8806dd13927?sid=f7c8ae78-3039-4d85-a2c3-2109ea09fca5

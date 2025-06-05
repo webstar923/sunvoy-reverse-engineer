@@ -1,0 +1,15 @@
+# Node modules and logs
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# dotenv/env files
+.env
+
+# Output files
+users.json
+cookies.json
+
+# VSCode settings
+.vscode/
